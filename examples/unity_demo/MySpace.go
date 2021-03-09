@@ -28,7 +28,7 @@ func (space *MySpace) OnSpaceCreated() {
 
 	goworld.CallServiceShardKey("SpaceService", strconv.Itoa(space.Kind), "NotifySpaceLoaded", space.Kind, space.ID)
 	space.AddTimer(time.Second*5, "DumpEntityStatus")
-	space.AddTimer(time.Second*5, "SummonMonsters")
+	//space.AddTimer(time.Second*5, "SummonMonsters")
 	//M := 10
 	//for i := 0; i < M; i++ {
 	//	space.CreateEntity("Monster", entity.Vector3{})
