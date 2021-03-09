@@ -22,6 +22,7 @@ const (
 	MT_NOTIFY_DESTROY_ENTITY
 	// MT_KVREG_REGISTER is a message type for declaring services
 	MT_KVREG_REGISTER
+	MT_TEST
 	// MT_CALL_ENTITY_METHOD is a message type for calling entity methods
 	MT_CALL_ENTITY_METHOD
 	// MT_CREATE_ENTITY_SOMEWHERE is a message type for creating entities
