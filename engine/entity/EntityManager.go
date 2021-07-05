@@ -2,10 +2,10 @@ package entity
 
 import (
 	"reflect"
-
 	"strings"
 
 	"github.com/pkg/errors"
+
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/consts"
 	"github.com/xiaonanln/goworld/engine/dispatchercluster"

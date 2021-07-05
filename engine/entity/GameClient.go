@@ -48,6 +48,7 @@ func (client *GameClient) sendCreateEntity(entity *Entity, isPlayer bool) {
 
 	pos := entity.Position
 	yaw := entity.yaw
+	gwlog.Debugf("sendCreateEntity >>> %s @ position=%s, isPlayer=%v", entity, entity.GetPosition(), isPlayer)
 	client.selectDispatcher().SendCreateEntityOnClient(client.gateid, client.clientid, entity.TypeName, entity.ID, isPlayer,
 		clientData, float32(pos.X), float32(pos.Y), float32(pos.Z), float32(yaw))
 }

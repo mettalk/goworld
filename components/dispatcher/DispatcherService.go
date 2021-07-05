@@ -1,18 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"github.com/xiaonanln/pktconn"
-
-	"net"
-
-	"time"
-
-	"os"
-
-	"math/rand"
-
 	"container/heap"
+	"fmt"
+	"math/rand"
+	"net"
+	"os"
+	"time"
 
 	"github.com/xiaonanln/goworld/engine/binutil"
 	"github.com/xiaonanln/goworld/engine/common"
@@ -23,6 +17,7 @@ import (
 	"github.com/xiaonanln/goworld/engine/netutil"
 	"github.com/xiaonanln/goworld/engine/post"
 	"github.com/xiaonanln/goworld/engine/proto"
+	"github.com/xiaonanln/pktconn"
 )
 
 type entityDispatchInfo struct {

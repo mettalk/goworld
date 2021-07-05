@@ -1,20 +1,16 @@
 package main
 
 import (
-	"github.com/xiaonanln/netconnutil"
-	"github.com/xiaonanln/pktconn"
-	"net"
-	"sync"
-
+	"crypto/tls"
 	"fmt"
-
 	"math/rand"
-
+	"net"
+	"reflect"
+	"sync"
 	"time"
 
-	"reflect"
-
-	"crypto/tls"
+	"github.com/xtaci/kcp-go"
+	"golang.org/x/net/websocket"
 
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/config"
@@ -24,8 +20,8 @@ import (
 	"github.com/xiaonanln/goworld/engine/netutil"
 	"github.com/xiaonanln/goworld/engine/post"
 	"github.com/xiaonanln/goworld/engine/proto"
-	"github.com/xtaci/kcp-go"
-	"golang.org/x/net/websocket"
+	"github.com/xiaonanln/netconnutil"
+	"github.com/xiaonanln/pktconn"
 )
 
 const _SPACE_ENTITY_TYPE = "__space__"

@@ -3,12 +3,11 @@ package entity
 import (
 	"fmt"
 	"reflect"
-
 	"time"
-
 	"unsafe"
 
 	"github.com/pkg/errors"
+
 	"github.com/xiaonanln/go-aoi"
 	timer "github.com/xiaonanln/goTimer"
 	"github.com/xiaonanln/goworld/engine/common"
@@ -991,7 +990,7 @@ func (e *Entity) enterLocalSpace(space *Space, pos Vector3) {
 			return
 		}
 
-		//gwlog.Infof("%s.enterLocalSpace ==> %s", e, space)
+		gwlog.Infof("%s.enterLocalSpace ==> %s (%v)", e, space, pos)
 		e.Space.leave(e)
 		space.enter(e, pos, false)
 	})

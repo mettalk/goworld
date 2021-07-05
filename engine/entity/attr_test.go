@@ -2,9 +2,8 @@ package entity
 
 import (
 	"math"
-	"testing"
-
 	"strconv"
+	"testing"
 
 	"gopkg.in/mgo.v2/bson"
 )

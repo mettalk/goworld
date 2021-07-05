@@ -186,12 +186,14 @@ func (space *Space) enter(entity *Entity, pos Vector3, isRestore bool) {
 	}
 
 	if space.IsNil() { // enter nil space does nothing
+		gwlog.Debugf("%s.enter(%s): current space is nil, do nothing", space, entity)
 		return
 	}
 
 	entity.Space = space
 	space.entities.Add(entity)
 	entity.Position = pos
+	gwlog.Debugf("%s.enter(%s): pos=%v", space, entity, pos)
 
 	entity.syncInfoFlag |= sifSyncOwnClient | sifSyncNeighborClients
 
@@ -248,7 +250,7 @@ func (space *Space) move(entity *Entity, newPos Vector3) {
 
 	entity.Position = newPos
 	space.aoiMgr.Moved(&entity.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Z))
-	gwlog.Debugf("%s: %s move to %v", space, entity, newPos)
+	// gwlog.Debugf("%s: %s move to %v", space, entity, newPos)
 }
 
 // OnEntityEnterSpace is called when entity enters space

@@ -2,15 +2,12 @@ package main
 
 import (
 	"fmt"
-
-	"reflect"
-
 	"math/rand"
+	"os"
+	"reflect"
 	"time"
 
-	"os"
-
-	"github.com/xiaonanln/goTimer"
+	timer "github.com/xiaonanln/goTimer"
 	"github.com/xiaonanln/goworld"
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/entity"

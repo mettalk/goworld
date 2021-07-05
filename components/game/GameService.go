@@ -2,14 +2,11 @@ package game
 
 import (
 	"fmt"
-	"github.com/xiaonanln/pktconn"
-
+	"io/ioutil"
 	"time"
 
-	"io/ioutil"
-
 	"github.com/xiaonanln/go-xnsyncutil/xnsyncutil"
-	"github.com/xiaonanln/goTimer"
+	timer "github.com/xiaonanln/goTimer"
 	"github.com/xiaonanln/goworld/engine/async"
 	"github.com/xiaonanln/goworld/engine/binutil"
 	"github.com/xiaonanln/goworld/engine/common"
@@ -26,6 +23,7 @@ import (
 	"github.com/xiaonanln/goworld/engine/post"
 	"github.com/xiaonanln/goworld/engine/proto"
 	"github.com/xiaonanln/goworld/engine/service"
+	"github.com/xiaonanln/pktconn"
 )
 
 const (

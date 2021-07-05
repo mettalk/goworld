@@ -1,12 +1,12 @@
 package proto
 
 import (
-	"github.com/xiaonanln/pktconn"
 	"net"
 
 	"github.com/xiaonanln/go-xnsyncutil/xnsyncutil"
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/netutil"
+	"github.com/xiaonanln/pktconn"
 )
 
 // GoWorldConnection is the network protocol implementation of GoWorld components (dispatcher, gate, game)

@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-
 	"strconv"
 
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/entity"
 	"github.com/xiaonanln/goworld/engine/gwlog"
 	"github.com/xiaonanln/goworld/engine/kvdb"
-	"github.com/xiaonanln/goworld/engine/kvdb/types"
+	kvdbtypes "github.com/xiaonanln/goworld/engine/kvdb/types"
 	"github.com/xiaonanln/goworld/engine/netutil"
 )
 

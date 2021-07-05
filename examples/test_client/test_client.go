@@ -2,17 +2,13 @@ package main
 
 import (
 	"flag"
-
-	"sync"
-
 	"math/rand"
+	_ "net/http/pprof"
+	"os"
+	"sync"
 	"time"
 
-	_ "net/http/pprof"
-
-	"os"
-
-	"github.com/xiaonanln/goTimer"
+	timer "github.com/xiaonanln/goTimer"
 	"github.com/xiaonanln/goworld/engine/binutil"
 	"github.com/xiaonanln/goworld/engine/config"
 	"github.com/xiaonanln/goworld/engine/gwlog"

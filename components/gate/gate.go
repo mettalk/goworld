@@ -2,24 +2,15 @@ package main
 
 import (
 	"flag"
-	"github.com/xiaonanln/pktconn"
-
-	"math/rand"
-	"time"
-
-	"os"
-
-	_ "net/http/pprof"
-
-	"runtime"
-
-	"os/signal"
-
-	"syscall"
-
 	"fmt"
-
+	"math/rand"
+	_ "net/http/pprof"
+	"os"
+	"os/signal"
 	"path"
+	"runtime"
+	"syscall"
+	"time"
 
 	"github.com/xiaonanln/goworld/engine/binutil"
 	"github.com/xiaonanln/goworld/engine/common"
@@ -28,6 +19,7 @@ import (
 	"github.com/xiaonanln/goworld/engine/dispatchercluster/dispatcherclient"
 	"github.com/xiaonanln/goworld/engine/gwlog"
 	"github.com/xiaonanln/goworld/engine/post"
+	"github.com/xiaonanln/pktconn"
 )
 
 var (

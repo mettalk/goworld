@@ -3,7 +3,7 @@ package goworld
 import (
 	"time"
 
-	"github.com/xiaonanln/goTimer"
+	timer "github.com/xiaonanln/goTimer"
 	"github.com/xiaonanln/goworld/components/game"
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/crontab"

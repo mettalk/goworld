@@ -1,19 +1,16 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
-	"github.com/xiaonanln/pktconn"
+	"net"
+	"path"
 	"time"
 
+	"github.com/pkg/errors"
+	"github.com/xtaci/kcp-go"
 	"golang.org/x/net/websocket"
 
-	"net"
-
-	"crypto/tls"
-
-	"path"
-
-	"github.com/pkg/errors"
 	"github.com/xiaonanln/go-xnsyncutil/xnsyncutil"
 	"github.com/xiaonanln/goworld/engine/binutil"
 	"github.com/xiaonanln/goworld/engine/common"
@@ -26,7 +23,7 @@ import (
 	"github.com/xiaonanln/goworld/engine/opmon"
 	"github.com/xiaonanln/goworld/engine/post"
 	"github.com/xiaonanln/goworld/engine/proto"
-	"github.com/xtaci/kcp-go"
+	"github.com/xiaonanln/pktconn"
 )
 
 // GateService implements the gate service logic
