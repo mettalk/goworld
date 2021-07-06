@@ -30,7 +30,8 @@ type Space struct {
 	Kind     int
 	I        ISpace
 
-	aoiMgr aoi.AOIManager
+	aoiMgr       aoi.AOIManager
+	nearbyAoiMgr aoi.AOIManager
 }
 
 func (space *Space) String() string {
@@ -202,6 +203,9 @@ func (space *Space) enter(entity *Entity, pos Vector3, isRestore bool) {
 
 		if space.aoiMgr != nil && entity.IsUseAOI() {
 			space.aoiMgr.Enter(&entity.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
+			if entity.IsUseNearbyAOI() {
+				space.nearbyAoiMgr.Enter(&entity.nearby.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
+			}
 		}
 
 		gwutils.RunPanicless(func() {
@@ -212,6 +216,9 @@ func (space *Space) enter(entity *Entity, pos Vector3, isRestore bool) {
 		// restoring ...
 		if space.aoiMgr != nil && entity.IsUseAOI() {
 			space.aoiMgr.Enter(&entity.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
+			if entity.IsUseNearbyAOI() {
+				space.nearbyAoiMgr.Enter(&entity.nearby.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
+			}
 		}
 
 	}
@@ -234,6 +241,9 @@ func (space *Space) leave(entity *Entity) {
 
 	if space.aoiMgr != nil && entity.IsUseAOI() {
 		space.aoiMgr.Leave(&entity.aoi)
+		if entity.IsUseNearbyAOI() {
+			space.nearbyAoiMgr.Leave(&entity.nearby.aoi)
+		}
 	}
 
 	entity.client.sendDestroyEntity(&space.Entity)
@@ -249,7 +259,10 @@ func (space *Space) move(entity *Entity, newPos Vector3) {
 	}
 
 	entity.Position = newPos
-	space.aoiMgr.Moved(&entity.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Z))
+	space.aoiMgr.Moved(&entity.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Y))
+	if space.nearbyAoiMgr == nil {
+		space.nearbyAoiMgr.Moved(&entity.nearby.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Z))
+	}
 	// gwlog.Debugf("%s: %s move to %v", space, entity, newPos)
 }
 

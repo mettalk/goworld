@@ -22,15 +22,17 @@ var (
 
 // EntityTypeDesc is the entity type description for registering entity types
 type EntityTypeDesc struct {
-	isService       bool
-	IsPersistent    bool
-	useAOI          bool
-	aoiDistance     Coord
-	entityType      reflect.Type
-	rpcDescs        rpcDescMap
-	allClientAttrs  common.StringSet
-	clientAttrs     common.StringSet
-	persistentAttrs common.StringSet
+	isService         bool
+	IsPersistent      bool
+	useAOI            bool
+	aoiDistance       Coord
+	useNearbyAOI      bool
+	nearbyAoiDistance Coord
+	entityType        reflect.Type
+	rpcDescs          rpcDescMap
+	allClientAttrs    common.StringSet
+	clientAttrs       common.StringSet
+	persistentAttrs   common.StringSet
 	//compositiveMethodComponentIndices map[string][]int
 	//definedAttrs                      bool
 }
@@ -59,6 +61,16 @@ func (desc *EntityTypeDesc) SetUseAOI(useAOI bool, aoiDistance Coord) *EntityTyp
 
 	desc.useAOI = useAOI
 	desc.aoiDistance = aoiDistance
+	return desc
+}
+
+func (desc *EntityTypeDesc) SetUseNearbyAOI(useNearbyAOI bool, nearbyAoiDistance Coord) *EntityTypeDesc {
+	if nearbyAoiDistance < 0 {
+		gwlog.Panicf("nearby aoi distance < 0")
+	}
+
+	desc.useNearbyAOI = useNearbyAOI
+	desc.nearbyAoiDistance = nearbyAoiDistance
 	return desc
 }
 
@@ -170,6 +182,7 @@ func RegisterEntity(typeName string, entity IEntity, isService bool) *EntityType
 		isService:       isService,
 		IsPersistent:    false,
 		useAOI:          false,
+		useNearbyAOI:    false,
 		entityType:      entityType,
 		rpcDescs:        rpcDescs,
 		clientAttrs:     common.StringSet{},

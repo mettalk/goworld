@@ -52,6 +52,7 @@ type Entity struct {
 	InterestedIn         EntitySet
 	InterestedBy         EntitySet
 	aoi                  aoi.AOI
+	nearby               *nearby
 	yaw                  Yaw
 	rawTimers            map[*timer.Timer]struct{}
 	timers               map[EntityTimerID]*entityTimerInfo
@@ -207,8 +208,41 @@ func (e *Entity) init(typeName string, entityid common.EntityID, entityInstance 
 	e.InterestedIn = EntitySet{}
 	e.InterestedBy = EntitySet{}
 	aoi.InitAOI(&e.aoi, aoi.Coord(e.typeDesc.aoiDistance), e, e)
+	e.nearby = &nearby{
+		entity:       e,
+		InterestedIn: EntitySet{},
+		InterestedBy: EntitySet{},
+	}
+	aoi.InitAOI(&e.nearby.aoi, aoi.Coord(e.typeDesc.nearbyAoiDistance), e, e.nearby)
 
 	e.I.OnInit()
+}
+
+type nearby struct {
+	entity       *Entity
+	InterestedIn EntitySet
+	InterestedBy EntitySet
+	aoi          aoi.AOI
+}
+
+func (n *nearby) OnEnterAOI(otherAoi *aoi.AOI) {
+	other := otherAoi.Data.(*nearby)
+	n.InterestedIn.Add(other.entity)
+	other.InterestedBy.Add(n.entity)
+}
+
+func (n *nearby) OnLeaveAOI(otherAoi *aoi.AOI) {
+	other := otherAoi.Data.(*nearby)
+	n.InterestedIn.Del(other.entity)
+	other.InterestedBy.Del(n.entity)
+}
+
+func (e *Entity) GetNearbyInterestedIn() EntitySet {
+	return e.nearby.InterestedIn
+}
+
+func (e *Entity) GetNearbyInterestedBy() EntitySet {
+	return e.nearby.InterestedBy
 }
 
 func (e *Entity) setupSaveTimer() {
@@ -1173,6 +1207,10 @@ func (e *Entity) CallFilteredClients(key, op, val string, method string, args ..
 // Entities like Account, Service entities should not be using aoi
 func (e *Entity) IsUseAOI() bool {
 	return e.typeDesc.useAOI
+}
+
+func (e *Entity) IsUseNearbyAOI() bool {
+	return e.typeDesc.useNearbyAOI
 }
 
 // GetPosition returns the entity position
