@@ -213,7 +213,7 @@ func (e *Entity) init(typeName string, entityid common.EntityID, entityInstance 
 		InterestedIn: EntitySet{},
 		InterestedBy: EntitySet{},
 	}
-	aoi.InitAOI(&e.nearby.aoi, aoi.Coord(e.typeDesc.nearbyAoiDistance), e, e.nearby)
+	aoi.InitAOI(&e.nearby.aoi, aoi.Coord(e.typeDesc.nearbyAoiDistance), e.nearby, e.nearby)
 
 	e.I.OnInit()
 }
@@ -226,15 +226,15 @@ type nearby struct {
 }
 
 func (n *nearby) OnEnterAOI(otherAoi *aoi.AOI) {
-	other := otherAoi.Data.(*nearby)
-	n.InterestedIn.Add(other.entity)
-	other.InterestedBy.Add(n.entity)
+	otherNearby := otherAoi.Data.(*nearby)
+	n.InterestedIn.Add(otherNearby.entity)
+	otherNearby.InterestedBy.Add(n.entity)
 }
 
 func (n *nearby) OnLeaveAOI(otherAoi *aoi.AOI) {
-	other := otherAoi.Data.(*nearby)
-	n.InterestedIn.Del(other.entity)
-	other.InterestedBy.Del(n.entity)
+	otherNearby := otherAoi.Data.(*nearby)
+	n.InterestedIn.Del(otherNearby.entity)
+	otherNearby.InterestedBy.Del(n.entity)
 }
 
 func (e *Entity) GetNearbyInterestedIn() EntitySet {
@@ -1229,6 +1229,7 @@ func (e *Entity) setPositionYaw(pos Vector3, yaw Yaw, fromClient bool) {
 		gwlog.Warnf("%s.SetPosition(%s): space is nil", e, pos)
 		return
 	}
+	pos.Z = pos.Y
 
 	space.move(e, pos)
 	e.yaw = yaw

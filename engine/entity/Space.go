@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	_SPACE_ENTITY_TYPE    = "__space__"
-	_SPACE_KIND_ATTR_KEY  = "_K"
-	_SPACE_ENABLE_AOI_KEY = "_EnableAOI"
+	_SPACE_ENTITY_TYPE           = "__space__"
+	_SPACE_KIND_ATTR_KEY         = "_K"
+	_SPACE_ENABLE_AOI_KEY        = "_EnableAOI"
+	_SPACE_ENABLE_NEARBY_AOI_KEY = "_EnableNearbyAOI"
 )
 
 var (
@@ -106,6 +107,23 @@ func (space *Space) EnableAOI(defaultAOIDistance Coord) {
 	space.aoiMgr = aoi.NewXZListAOIManager(aoi.Coord(defaultAOIDistance))
 }
 
+func (space *Space) EnableNearbyAOI(defaultNearbyAOIDistance Coord) {
+	if defaultNearbyAOIDistance <= 0 {
+		gwlog.Panicf("defaultNearbyAOIDistance < 0")
+	}
+
+	if space.nearbyAoiMgr != nil {
+		gwlog.Panicf("%s.EnableNearbyAOI: nearby AOI already enabled", space)
+	}
+
+	if len(space.entities) > 0 {
+		gwlog.Panicf("%s is already using nearby AOI", space)
+	}
+
+	space.Attrs.SetFloat(_SPACE_ENABLE_NEARBY_AOI_KEY, float64(defaultNearbyAOIDistance))
+	space.nearbyAoiMgr = aoi.NewXZListAOIManager(aoi.Coord(defaultNearbyAOIDistance))
+}
+
 // OnRestored is called when space entity is restored
 func (space *Space) OnRestored() {
 	space.onSpaceCreated()
@@ -113,6 +131,10 @@ func (space *Space) OnRestored() {
 	aoidist := space.GetFloat(_SPACE_ENABLE_AOI_KEY)
 	if aoidist > 0 {
 		space.EnableAOI(Coord(aoidist))
+	}
+	nearbyAoidist := space.GetFloat(_SPACE_ENABLE_NEARBY_AOI_KEY)
+	if nearbyAoidist > 0 {
+		space.EnableNearbyAOI(Coord(nearbyAoidist))
 	}
 }
 
@@ -203,7 +225,7 @@ func (space *Space) enter(entity *Entity, pos Vector3, isRestore bool) {
 
 		if space.aoiMgr != nil && entity.IsUseAOI() {
 			space.aoiMgr.Enter(&entity.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
-			if entity.IsUseNearbyAOI() {
+			if space.nearbyAoiMgr != nil && entity.IsUseNearbyAOI() {
 				space.nearbyAoiMgr.Enter(&entity.nearby.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
 			}
 		}
@@ -216,7 +238,7 @@ func (space *Space) enter(entity *Entity, pos Vector3, isRestore bool) {
 		// restoring ...
 		if space.aoiMgr != nil && entity.IsUseAOI() {
 			space.aoiMgr.Enter(&entity.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
-			if entity.IsUseNearbyAOI() {
+			if space.nearbyAoiMgr != nil && entity.IsUseNearbyAOI() {
 				space.nearbyAoiMgr.Enter(&entity.nearby.aoi, aoi.Coord(pos.X), aoi.Coord(pos.Z))
 			}
 		}
@@ -241,7 +263,7 @@ func (space *Space) leave(entity *Entity) {
 
 	if space.aoiMgr != nil && entity.IsUseAOI() {
 		space.aoiMgr.Leave(&entity.aoi)
-		if entity.IsUseNearbyAOI() {
+		if space.nearbyAoiMgr != nil && entity.IsUseNearbyAOI() {
 			space.nearbyAoiMgr.Leave(&entity.nearby.aoi)
 		}
 	}
@@ -259,8 +281,8 @@ func (space *Space) move(entity *Entity, newPos Vector3) {
 	}
 
 	entity.Position = newPos
-	space.aoiMgr.Moved(&entity.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Y))
-	if space.nearbyAoiMgr == nil {
+	space.aoiMgr.Moved(&entity.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Z))
+	if space.nearbyAoiMgr != nil {
 		space.nearbyAoiMgr.Moved(&entity.nearby.aoi, aoi.Coord(newPos.X), aoi.Coord(newPos.Z))
 	}
 	// gwlog.Debugf("%s: %s move to %v", space, entity, newPos)
