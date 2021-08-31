@@ -39,3 +39,5 @@ require (
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
+
+replace github.com/xiaonanln/pktconn v0.0.0-20200905130536-8a9529b7c220 => github.com/mettalk/pktconn v0.0.0-20210831103000-2c79aab55c92
