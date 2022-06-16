@@ -1,13 +1,13 @@
 package kvdbmongo
 
 import (
-	"gopkg.in/mgo.v2"
-
 	"io"
 
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
+
 	"github.com/xiaonanln/goworld/engine/gwlog"
-	"github.com/xiaonanln/goworld/engine/kvdb/types"
-	"gopkg.in/mgo.v2/bson"
+	kvdbtypes "github.com/xiaonanln/goworld/engine/kvdb/types"
 )
 
 const (

@@ -1,14 +1,16 @@
 package entitystoragemongodb
 
 import (
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-
 	"io"
+
+	// "gopkg.in/mgo.v2"
+	// "gopkg.in/mgo.v2/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/gwlog"
-	"github.com/xiaonanln/goworld/engine/storage/storage_common"
+	storagecommon "github.com/xiaonanln/goworld/engine/storage/storage_common"
 )
 
 const (

@@ -7,6 +7,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
 	github.com/chasex/redis-go-cluster v1.0.0
 	github.com/garyburd/redigo v1.6.0
+	github.com/globalsign/mgo v0.0.0-20180615134936-113d3961e731
 	github.com/go-ini/ini v1.51.0
 	github.com/go-ole/go-ole v1.2.4
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
