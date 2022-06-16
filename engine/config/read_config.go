@@ -1,24 +1,18 @@
 package config
 
 import (
-	"strings"
-
-	"strconv"
-
-	"fmt"
-
 	"encoding/json"
-
-	"sync"
-
-	"sort"
-
-	"time"
-
+	"fmt"
 	"path"
+	"sort"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
 
 	"github.com/go-ini/ini"
 	"github.com/pkg/errors"
+
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/gwlog"
 )
@@ -577,7 +571,7 @@ func checkConfigError(err error, msg string) {
 }
 
 func validateStorageConfig(config *StorageConfig) {
-	if config.Type == "mongodb" {
+	if config.Type == "mongodb" || config.Type == "mongodb_mongodriver" {
 		if config.Url == "" {
 			gwlog.Fatalf("url is not set in %s storage config", config.Type)
 		}
