@@ -10,8 +10,9 @@ import (
 	"github.com/xiaonanln/goworld/engine/gwlog"
 	"github.com/xiaonanln/goworld/engine/opmon"
 	"github.com/xiaonanln/goworld/engine/post"
-	"github.com/xiaonanln/goworld/engine/storage/backend/mongodb"
-	"github.com/xiaonanln/goworld/engine/storage/storage_common"
+	entitystoragemongodb "github.com/xiaonanln/goworld/engine/storage/backend/mongodb"
+	mongodbmongodriver "github.com/xiaonanln/goworld/engine/storage/backend/mongodb_mongodriver"
+	storagecommon "github.com/xiaonanln/goworld/engine/storage/storage_common"
 )
 
 var (
@@ -131,6 +132,8 @@ func assureStorageEngineReady() (err error) {
 	cfg := config.GetStorage()
 	if cfg.Type == "mongodb" {
 		storageEngine, err = entitystoragemongodb.OpenMongoDB(cfg.Url, cfg.DB)
+	} else if cfg.Type == "mongodb_mongodriver" {
+		storageEngine, err = mongodbmongodriver.OpenMongoDB(cfg.Url, cfg.DB)
 	} else {
 		gwlog.Panicf("unknown storage type: %s", cfg.Type)
 	}

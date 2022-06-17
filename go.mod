@@ -31,6 +31,7 @@ require (
 	github.com/xiaonanln/typeconv v0.0.4
 	github.com/xtaci/kcp-go v5.4.19+incompatible
 	github.com/xtaci/lossyconn v0.0.0-20190602105132-8df528c0c9ae // indirect
+	go.mongodb.org/mongo-driver v1.9.1
 	go.uber.org/zap v1.13.0
 	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933
 	golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9

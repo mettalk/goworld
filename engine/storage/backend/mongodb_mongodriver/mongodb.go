@@ -1,10 +1,14 @@
-package entitystoragemongodb
+package mongodbmongodriver
 
 import (
+	"context"
 	"io"
+	"log"
+	"time"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/xiaonanln/goworld/engine/common"
 	"github.com/xiaonanln/goworld/engine/gwlog"
@@ -15,46 +19,50 @@ const (
 	_DEFAULT_DB_NAME = "goworld"
 )
 
-var (
-	db *mgo.Database
-)
-
 type mongoDBEntityStorge struct {
-	db *mgo.Database
+	client *mongo.Client
+	dbname string
 }
 
 // OpenMongoDB opens mongodb as entity storage
 func OpenMongoDB(url string, dbname string) (storagecommon.EntityStorage, error) {
 	gwlog.Debugf("Connecting MongoDB ...")
-	session, err := mgo.Dial(url)
+	client, err := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	session.SetMode(mgo.Monotonic, true)
 	if dbname == "" {
 		// if db is not specified, use default
 		dbname = _DEFAULT_DB_NAME
 	}
-	db = session.DB(dbname)
 	return &mongoDBEntityStorge{
-		db: db,
+		client: client,
+		dbname: dbname,
 	}, nil
 }
 
 func (es *mongoDBEntityStorge) Write(typeName string, entityID common.EntityID, data interface{}) error {
-	col := es.getCollection(typeName)
-	_, err := col.UpsertId(entityID, bson.M{
+	replaceOpts := options.Replace().SetUpsert(true)
+	filter := bson.M{"_id": entityID}
+	replacement := bson.M{
 		"data": data,
-	})
+	}
+	_, err := es.client.Database(es.dbname).Collection(typeName).ReplaceOne(context.TODO(), filter, replacement, replaceOpts)
 	return err
 }
 
 func (es *mongoDBEntityStorge) Read(typeName string, entityID common.EntityID) (interface{}, error) {
-	col := es.getCollection(typeName)
-	q := col.FindId(entityID)
 	var doc bson.M
-	err := q.One(&doc)
+	findOneOpts := options.FindOne().SetMaxTime(10 * time.Second)
+	err := es.client.Database(es.dbname).Collection(typeName).FindOne(context.TODO(), bson.M{
+		"_id": entityID,
+	}, findOneOpts).Decode(&doc)
 	if err != nil {
 		return nil, err
 	}
@@ -93,15 +101,14 @@ func (es *mongoDBEntityStorge) convertM2MapInList(l []interface{}) {
 	}
 }
 
-func (es *mongoDBEntityStorge) getCollection(typeName string) *mgo.Collection {
-	return es.db.C(typeName)
-}
-
 func (es *mongoDBEntityStorge) List(typeName string) ([]common.EntityID, error) {
-	col := es.getCollection(typeName)
 	var docs []bson.M
-	err := col.Find(nil).Select(bson.M{"_id": 1}).All(&docs)
+	findOpts := options.Find().SetMaxTime(10 * time.Second)
+	cursor, err := es.client.Database(es.dbname).Collection(typeName).Find(context.TODO(), bson.M{}, findOpts)
 	if err != nil {
+		return nil, err
+	}
+	if err := cursor.All(context.TODO(), &docs); err != nil {
 		return nil, err
 	}
 
@@ -110,25 +117,25 @@ func (es *mongoDBEntityStorge) List(typeName string) ([]common.EntityID, error) 
 		entityIDs[i] = common.EntityID(doc["_id"].(string))
 	}
 	return entityIDs, nil
+
 }
 
 func (es *mongoDBEntityStorge) Exists(typeName string, entityID common.EntityID) (bool, error) {
-	col := es.getCollection(typeName)
-	query := col.FindId(entityID)
 	var doc bson.M
-	err := query.One(&doc)
+	findOneOpts := options.FindOne().SetMaxTime(10 * time.Second)
+	err := es.client.Database(es.dbname).Collection(typeName).FindOne(context.TODO(), bson.M{
+		"_id": entityID,
+	}, findOneOpts).Decode(&doc)
 	if err == nil {
-		// doc found
 		return true, nil
-	} else if err == mgo.ErrNotFound {
+	} else if err == mongo.ErrNoDocuments {
 		return false, nil
-	} else {
-		return false, err
 	}
+	return false, err
 }
 
 func (es *mongoDBEntityStorge) Close() {
-	es.db.Session.Close()
+	es.client.Disconnect(context.TODO())
 }
 
 func (es *mongoDBEntityStorge) IsEOF(err error) bool {
