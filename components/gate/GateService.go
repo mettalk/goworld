@@ -33,6 +33,7 @@ type GateService struct {
 	dispatcherClientPacketQueue chan *pktconn.Packet
 	clientPacketQueue           chan *pktconn.Packet
 	ticker                      <-chan time.Time
+	heartbeatTicker             <-chan time.Time
 
 	filterTrees             map[string]*_FilterTree
 	pendingSyncPackets      []*netutil.Packet
@@ -40,6 +41,7 @@ type GateService struct {
 	terminating             xnsyncutil.AtomicBool
 	terminated              *xnsyncutil.OneTimeCond
 	tlsConfig               *tls.Config
+	enableCheckHeatbeat     bool
 	checkHeartbeatsInterval time.Duration
 	positionSyncInterval    time.Duration
 }
@@ -59,6 +61,8 @@ func newGateService() *GateService {
 		dispatcherClientPacketQueue: make(chan *pktconn.Packet, consts.GATE_SERVICE_PACKET_QUEUE_SIZE),
 		clientPacketQueue:           make(chan *pktconn.Packet, consts.GATE_SERVICE_PACKET_QUEUE_SIZE),
 		ticker:                      time.Tick(consts.GATE_SERVICE_TICK_INTERVAL),
+		heartbeatTicker:             time.Tick(consts.GATE_SERVICE_HEARTBEAT_TICK_INTERVAL),
+		enableCheckHeatbeat:         false,
 		filterTrees:                 map[string]*_FilterTree{},
 		pendingSyncPackets:          pendingSyncPackets,
 		terminated:                  xnsyncutil.NewOneTimeCond(),
@@ -78,6 +82,7 @@ func (gs *GateService) run() {
 	go gs.serveKCP(gs.listenAddr)
 
 	if cfg.HeartbeatCheckInterval > 0 {
+		gs.enableCheckHeatbeat = true
 		gs.checkHeartbeatsInterval = time.Second * time.Duration(cfg.HeartbeatCheckInterval)
 		gwlog.Infof("%s: checkHeartbeatsInterval = %s", gs, gs.checkHeartbeatsInterval)
 	}
@@ -192,6 +197,10 @@ func (gs *GateService) handleClientConnection(conn net.Conn, isWebSocket bool) {
 }
 
 func (gs *GateService) checkClientHeartbeats() {
+	if !gs.enableCheckHeatbeat {
+		return
+	}
+
 	now := time.Now()
 
 	for _, cp := range gs.clientProxies { // close all connected clients when terminating
@@ -441,6 +450,9 @@ func (gs *GateService) mainRoutine() {
 			break
 		case <-gs.ticker:
 			gs.tryFlushPendingSyncPackets()
+			break
+		case <-gs.heartbeatTicker:
+			gs.checkClientHeartbeats()
 			break
 		}
 
