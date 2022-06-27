@@ -63,6 +63,7 @@ func parseArgs() {
 //
 // This is the main game server loop
 func Run() {
+	gwlog.Errorf("gogo")
 	rand.Seed(time.Now().UnixNano())
 	parseArgs()
 
