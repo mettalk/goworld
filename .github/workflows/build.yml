@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - deploy_test
+      - jojo-test
 
 jobs:
   cancel-previous-runs:
