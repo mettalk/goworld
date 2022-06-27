@@ -36,8 +36,8 @@ jobs:
           goworld build examples/nil_game
           mkdir -p downloads
           cp $(which goworld) ./downloads
-          cp components/dispatcher ./downloads
-          cp components/gate ./downloads
+          cp components/dispatcher/dispatcher ./downloads
+          cp components/gate/gate ./downloads
       - uses: actions/upload-artifact@v3
         with:
           name: goworld-${{ matrix.os }}
