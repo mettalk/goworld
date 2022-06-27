@@ -22,7 +22,6 @@ jobs:
     strategy:
       matrix:
         go: [1.15.2]
-        # os: ["ubuntu-18.04", "macos-10.15"]
         os: ["ubuntu-18.04"]
     steps:
       - uses: actions/setup-go@v2
@@ -31,9 +30,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         run: |
+          # build goworld
           go get ./cmd/...
-          which goworld
+          # build gate and dispatcher
           goworld build examples/nil_game
+          # copy binaries to downloads
           mkdir -p downloads
           cp $(which goworld) ./downloads
           cp components/dispatcher/dispatcher ./downloads
