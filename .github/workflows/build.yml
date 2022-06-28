@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - jojo
-      - jojo-test
 
 jobs:
   cancel-previous-runs:
@@ -32,8 +31,10 @@ jobs:
         run: |
           # build goworld
           go get ./cmd/...
+
           # build gate and dispatcher
           goworld build examples/nil_game
+
           # copy binaries to downloads
           mkdir -p downloads
           cp $(which goworld) ./downloads
